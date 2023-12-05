@@ -1,9 +1,12 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <queue>
+#include <string>
+#include <unordered_map>
 using namespace std;
 ifstream f("data.in");
-ofstream g("table.txt"); //lookup table
-ofstream h("tree.txt"); //huffman tree, to be implemented
-int SIZE{}; //nb of distinct instructions
+ofstream h("tree.txt"); //huffman tree
+const int SIZE = 100; //nb of distinct instructions
 
 class Node {
 public:
@@ -62,24 +65,37 @@ void printCodes(Node* root, int arr[], int top=0)
     //if leaf or already explored children, print the encoding
     if (!root->left && !root->right)
     {
-        g << root->data << " ";
+        h << root->data << " ";
         for (int i = 0; i < top; ++i)
-            g << arr[i];
-        g << endl;
+            h << arr[i];
+        h << endl;
     }
 }
 void printTree(Node* root)
 {
-    //for each node X, print X, left child, right child.
-    h<<root->data<<" ";
-    bool l{}, r{};
-    if(root->left) l=1, h<<root->left->data<<" ";
-    else h<<"-1 ";
-    if(root->right) r=1, h<<root->right->data<<" ";
-    else h<<"-1";
+    //for each node X, print 0 if parent, 1 if leaf.
+    queue< Node* > qe;
+    qe.push(root->left);
+    qe.push(root->right);
+    while(!qe.empty())
+    {
+        bool parent{};
+        Node* node = qe.front(); qe.pop();
+        if (node -> left)
+        {
+            parent = true;
+            qe.push(node -> left);
+        }
+        if(node -> right)
+        {
+            parent = true;
+            qe.push(node -> right);
+        }
+        h<<!parent;
+    }
     h<<'\n';
-    if(l) printTree(root->left);
-    if(r) printTree(root->right);
+    int arr[SIZE];
+    printCodes(root, arr);
 }
 
 void huffman(unordered_map<string, int> v)
@@ -93,8 +109,6 @@ void huffman(unordered_map<string, int> v)
     }
     Node* root = generateTree(pq);
 
-    int arr[SIZE];
-    printCodes(root, arr);
     printTree(root);
 }
 
@@ -116,11 +130,7 @@ void read(unordered_map<string, int>& umap)
 int main()
 {
     unordered_map<string, int> freq;
-
     read(freq);
-
-    SIZE=freq.size();
-
     huffman(freq);
 
     return 0;
