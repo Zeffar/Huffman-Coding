@@ -5,6 +5,8 @@
 #include <unordered_map>
 using namespace std;
 ifstream f("data.in");
+ifstream fin("alphabet.txt");
+ofstream g("alphabet.txt"); //self explanatory 
 ofstream h("tree.txt"); //huffman tree
 const int SIZE = 100; //nb of distinct instructions
 
@@ -49,7 +51,8 @@ void printCodes(Node* root, int arr[], int top=0)
 {//arr[] - encoding of the node
  //top - current node if it has unexplored children
  //0 - left move : 1 - right move
-
+    if(root->left || root->right) h<<'0';
+    else h<<'1';
     if (root->left)
     {
         arr[top] = 0;
@@ -65,37 +68,11 @@ void printCodes(Node* root, int arr[], int top=0)
     //if leaf or already explored children, print the encoding
     if (!root->left && !root->right)
     {
-        h << root->data << " ";
+        g << root->data << " ";
         for (int i = 0; i < top; ++i)
-            h << arr[i];
-        h << endl;
+            g << arr[i];
+        g << endl;
     }
-}
-void printTree(Node* root)
-{
-    //for each node X, print 0 if parent, 1 if leaf.
-    queue< Node* > qe;
-    qe.push(root->left);
-    qe.push(root->right);
-    while(!qe.empty())
-    {
-        bool parent{};
-        Node* node = qe.front(); qe.pop();
-        if (node -> left)
-        {
-            parent = true;
-            qe.push(node -> left);
-        }
-        if(node -> right)
-        {
-            parent = true;
-            qe.push(node -> right);
-        }
-        h<<!parent;
-    }
-    h<<'\n';
-    int arr[SIZE];
-    printCodes(root, arr);
 }
 
 void huffman(unordered_map<string, int> v)
@@ -108,8 +85,8 @@ void huffman(unordered_map<string, int> v)
         pq.push(newNode);
     }
     Node* root = generateTree(pq);
-
-    printTree(root);
+    int arr[SIZE];
+    printCodes(root, arr);
 }
 
 void read(unordered_map<string, int>& umap)
@@ -118,20 +95,29 @@ void read(unordered_map<string, int>& umap)
     while(true)
     {
         getline(f, s);
-        if(f.eof()) break;
-
         if (umap.find(s)!=umap.end())
             ++umap[s];
         else
             umap[s]=1;
+        if(f.eof()) break;
     }
 }
-
+void merge_files()
+{
+    h<<'\n';
+    string s;
+    while(true)
+    {
+        getline(fin, s);
+        if(fin.eof()) break;
+        h<<s<<'\n';
+    }
+}
 int main()
 {
     unordered_map<string, int> freq;
     read(freq);
     huffman(freq);
-
+    merge_files();
     return 0;
 }
