@@ -16,11 +16,11 @@ public:
     int freq;
     Node* left;
     Node* right;
-    Node(string ID, int freq)
+    Node(string ID, int fr)
     {
-        data = ID;
-        freq = freq;
+        this->data = ID;
         left = right = NULL;
+        this->freq = fr;
     }
 };
 
@@ -32,13 +32,12 @@ public:
 
 Node* generateTree(priority_queue<Node*, vector<Node*>, Compare> pq)
 {
-    int currentSize=SIZE;
     while (pq.size() != 1) //loop stops when only the root is left in queue
     {//generate parent from 2 nodes, build the tree bottom-up
         Node* left = pq.top(); pq.pop();
         Node* right = pq.top();pq.pop();
 
-        Node* node = new Node(to_string(++currentSize), left->freq + right->freq);
+        Node* node = new Node("#", left->freq + right->freq);
         node->left = left;
         node->right = right;
 
@@ -81,12 +80,20 @@ void huffman(unordered_map<string, int> v)
 
     for (auto i : v)
     {
+        // cout<<i.first<<" "<<i.second<<'\n';
         Node* newNode = new Node(i.first, i.second);
         pq.push(newNode);
     }
+    // while(pq.size())
+    // {
+    //     Node* nod = pq.top(); pq.pop();
+    //     cout<<nod->data<<" "<<nod->freq<<'\n';
+
+    // }
     Node* root = generateTree(pq);
     int arr[SIZE];
     printCodes(root, arr);
+
 }
 
 void read(unordered_map<string, int>& umap)
@@ -100,7 +107,7 @@ void read(unordered_map<string, int>& umap)
         else
             umap[s]=1;
         if(f.eof()) break;
-    }
+    } 
 }
 void merge_files()
 {
