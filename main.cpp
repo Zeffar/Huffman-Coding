@@ -108,7 +108,32 @@ void read(unordered_map<string, int>& umap)
             umap[s]=1;
         if(f.eof()) break;
     } 
+    f.close();
 }
+
+void readFreq(unordered_map<string, int>& umap)
+{
+    ifstream freqRead("frequency.txt");
+    string instruction;
+    int freqency;
+    while(true)
+    {
+        freqRead>>instruction>>freqency;
+        umap[instruction] = freqency;
+        if(freqRead.eof()) break;
+    }
+    freqRead.close();
+}
+
+void write(unordered_map<string, int> umap)
+{
+    ofstream freqWrite("frequency.txt");
+    for (auto it : umap){
+        freqWrite<<it.first<<" "<<it.second<<'\n';
+    }
+    freqWrite.close();
+}
+
 void merge_files()
 {
     h<<'\n';
@@ -120,10 +145,29 @@ void merge_files()
         h<<s<<'\n';
     }
 }
-int main()
+
+int main(int argc, char* argv[])
 {
     unordered_map<string, int> freq;
+    if (argc == 2){
+        std::string command = argv[1];
+        if (command == "--file"){
+            read(freq);
+            write(freq);
+        } else if (command == "--tree") {
+            readFreq(freq);
+            huffman(freq);
+            merge_files();
+        }
+        else {
+            cerr<<"Unknown command, expected [--file | --tree]\nTerminating program\n";
+            return 1;
+        }
+        return 0;
+    }
+
     read(freq);
+    write(freq);
     huffman(freq);
     merge_files();
     return 0;
