@@ -6,7 +6,7 @@
 using namespace std;
 ifstream f("data.in");
 ifstream fin("alphabet.txt");
-ofstream g("alphabet.txt"); //self explanatory 
+ofstream g("alphabet.txt"); //self explanatory
 ofstream h("tree.txt"); //huffman tree
 const int SIZE = 100; //nb of distinct instructions
 
@@ -108,32 +108,7 @@ void read(unordered_map<string, int>& umap)
             umap[s]=1;
         if(f.eof()) break;
     } 
-    f.close();
 }
-
-void readFreq(unordered_map<string, int>& umap)
-{
-    ifstream freqRead("frequency.txt");
-    string instruction;
-    int freqency;
-    while(true)
-    {
-        freqRead>>instruction>>freqency;
-        umap[instruction] = freqency;
-        if(freqRead.eof()) break;
-    }
-    freqRead.close();
-}
-
-void write(unordered_map<string, int> umap)
-{
-    ofstream freqWrite("frequency.txt");
-    for (auto it : umap){
-        freqWrite<<it.first<<" "<<it.second<<'\n';
-    }
-    freqWrite.close();
-}
-
 void merge_files()
 {
     h<<'\n';
